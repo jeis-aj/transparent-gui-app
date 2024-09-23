@@ -1,8 +1,12 @@
-QT += widgets
-CONFIG += c++11
+QT += core gui widgets printsupport  # Add printsupport module
+
+TARGET = TransparentPlotApp
+TEMPLATE = app
 
 SOURCES += main.cpp \
-           mainwindow.cpp
+           mainwindow.cpp \
+           qcustomplot.cpp
 
-HEADERS += mainwindow.h
+HEADERS += mainwindow.h \
+           qcustomplot.h
 

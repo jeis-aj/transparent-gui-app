@@ -1,34 +1,58 @@
 #include "mainwindow.h"
-#include <QLabel>
 #include <QVBoxLayout>
-#include <QPalette>
-#include <QBrush>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent) {
-    // Set window properties for transparency
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool);
+
+    // Set up transparent window
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     setAttribute(Qt::WA_TranslucentBackground);
 
-    // Create a central widget
+    // Create the QCustomPlot object for the plot
+    customPlot = new QCustomPlot(this);
+
+    // Set transparent background for the plot
+    customPlot->setBackground(Qt::transparent);
+    customPlot->axisRect()->setBackground(Qt::transparent);
+
+    // Call method to setup the plot
+    setupPlot();
+
+    // Layout for the plot
     QWidget *centralWidget = new QWidget(this);
-    setCentralWidget(centralWidget);
-
-    // Set a transparent background color
-    QPalette palette = centralWidget->palette();
-    palette.setColor(QPalette::Background, Qt::transparent);
-    centralWidget->setAutoFillBackground(true);
-    centralWidget->setPalette(palette);
-
-    // Create a label with "Hello, World!" text
-    QLabel *label = new QLabel("Hello, World!", this);
-    label->setStyleSheet("QLabel { color : white; font-size: 30px; }");
-
-    // Create a layout and add the label
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
-    layout->addWidget(label);
-    layout->setAlignment(label, Qt::AlignCenter);
+    layout->addWidget(customPlot);
+    setCentralWidget(centralWidget);
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+    // Custom clean-up logic
+}
+
+void MainWindow::setupPlot() {
+    // Add some data for the line plot
+    QVector<double> x(100), y(100); // Create vectors for x and y data
+    for (int i = 0; i < 100; ++i) {
+        x[i] = i / 10.0;
+        y[i] = qSin(x[i]); // y = sin(x)
+    }
+
+    customPlot->addGraph();
+    customPlot->graph(0)->setData(x, y);
+
+    // Style the plot
+    customPlot->graph(0)->setPen(QPen(Qt::white)); // Set line color to white
+    customPlot->xAxis->setRange(0, 10);
+    customPlot->yAxis->setRange(-1, 1);
+
+    // Set axis color to transparent (if required)
+    customPlot->xAxis->setBasePen(QPen(Qt::white));
+    customPlot->yAxis->setBasePen(QPen(Qt::white));
+
+    customPlot->xAxis->setTickPen(QPen(Qt::white));
+    customPlot->yAxis->setTickPen(QPen(Qt::white));
+
+    customPlot->xAxis->setTickLabelColor(Qt::white);
+    customPlot->yAxis->setTickLabelColor(Qt::white);
+}
 
